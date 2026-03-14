@@ -37,13 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // WhatsApp Button Logic
+    // WhatsApp Configuration
+    const whatsappPhoneNumber = '916238501981';
+
+    // Helper to open WhatsApp
+    window.openWhatsApp = function (message) {
+        const encodedMessage = encodeURIComponent(message || 'Hello Beacon Bridge Global Consultancy! I would like to inquire about your services.');
+        window.open(`https://wa.me/${whatsappPhoneNumber}?text=${encodedMessage}`, '_blank');
+    };
+
+    // WhatsApp Floating Button logic
     const whatsappBtn = document.querySelector('.whatsapp-float');
     if (whatsappBtn) {
         whatsappBtn.addEventListener('click', () => {
-            const phoneNumber = '919000000000'; // Placeholder - update with actual
-            const message = encodeURIComponent('Hello Beacon Bridge Global Consultancy! I would like to inquire about study abroad opportunities.');
-            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+            window.openWhatsApp('Hello Beacon Bridge Global Consultancy! I would like to inquire about study abroad opportunities.');
         });
     }
 
@@ -87,51 +94,109 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Uzbekistan', img: 'uzbekistan/hero.png' }
     ];
 
-    const drumContainer = document.getElementById('heroCarousel');
-    if (drumContainer) {
-        // Clean up old container class and content
-        drumContainer.innerHTML = '';
-        drumContainer.className = 'hero-drum';
-
-        // Add Caps
-        const topCap = document.createElement('div');
-        topCap.className = 'drum-cap top';
-        drumContainer.appendChild(topCap);
-
-        const bottomCap = document.createElement('div');
-        bottomCap.className = 'drum-cap bottom';
-        drumContainer.appendChild(bottomCap);
-
-        const totalItems = countries.length;
-        const tiers = 3;
-        const itemsPerTier = totalItems / tiers;
-        const angleStep = 360 / itemsPerTier;
-        const radius = 320; // Increased radius for larger cylinder (from 250)
-
-        for (let t = 0; t < tiers; t++) {
-            const tier = document.createElement('div');
-            tier.className = 'drum-tier';
-
-            for (let i = 0; i < itemsPerTier; i++) {
-                const countryIndex = t * itemsPerTier + i;
-                const country = countries[countryIndex];
-
-                const item = document.createElement('div');
-                item.className = 'drum-item';
-
-                const angle = i * angleStep;
-                item.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-
-                item.innerHTML = `
-                    <img src="${country.img}" alt="${country.name}" class="hd-image">
-                    <div class="drum-label">${country.name}</div>
-                `;
-
-                tier.appendChild(item);
+    // Hero Carousel - Static Grid handled via HTML/CSS now
+    
+    // Hero Carousel Dots Scroll Sync
+    const heroCarousel = document.querySelector('.hero-carousel');
+    const dots = document.querySelectorAll('.carousel-dots .dot');
+    
+    if (heroCarousel && dots.length > 0) {
+        heroCarousel.addEventListener('scroll', () => {
+            const scrollLeft = heroCarousel.scrollLeft;
+            const maxScroll = heroCarousel.scrollWidth - heroCarousel.clientWidth;
+            
+            // Avoid division by zero
+            if (maxScroll <= 0) return;
+            
+            const scrollPercentage = scrollLeft / maxScroll;
+            
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            if (scrollPercentage < 0.33) {
+                dots[0].classList.add('active');
+            } else if (scrollPercentage < 0.66) {
+                dots[1].classList.add('active');
+            } else {
+                dots[2].classList.add('active');
             }
-            drumContainer.appendChild(tier);
-        }
+        });
+        
+        // Dot Click Navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                const maxScroll = heroCarousel.scrollWidth - heroCarousel.clientWidth;
+                let targetScroll = 0;
+                if (index === 1) targetScroll = maxScroll / 2;
+                if (index === 2) targetScroll = maxScroll;
+                
+                heroCarousel.scrollTo({
+                    left: targetScroll,
+                    behavior: 'smooth'
+                });
+            });
+        });
     }
+
+    // Flip Card Logic - Handled via CSS hover in index.css
+    // We removed the click handler to allow hover-based flipping while keeping buttons interactive.
+
+    // Category Selection Logic
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation(); // Prevent card from flipping back
+            const card = this.closest('.flip-card');
+            const category = this.dataset.category;
+
+            // Update active button
+            card.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update content
+            card.querySelectorAll('.category-detail').forEach(detail => {
+                detail.classList.remove('active');
+                if (detail.classList.contains(category)) {
+                    detail.classList.add('active');
+                }
+            });
+        });
+    });
+
+    // Enquire Button Logic (Contextual WhatsApp messages for Flip Cards)
+    document.querySelectorAll('.card-enquire-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const country = this.dataset.country;
+            const cardBack = this.closest('.flip-card-back');
+            const activeCategoryBtn = cardBack.querySelector('.category-btn.active');
+            const category = activeCategoryBtn ? activeCategoryBtn.dataset.category : 'general';
+
+            const categoryMap = {
+                'job': 'job opportunities',
+                'edu': 'education programs',
+                'tour': 'tourism packages'
+            };
+
+            const message = `Hello! I am interested in ${categoryMap[category] || 'opportunities'} in ${country}. Could you please provide more details?`;
+            window.openWhatsApp(message);
+        });
+    });
+
+    // Global Listener for all other "Inquire Now" / "Consultation" buttons
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('a, button');
+        if (!target) return;
+
+        const text = target.textContent.trim().toLowerCase();
+        // Identify buttons that should trigger WhatsApp
+        if (text.includes('enquire') || text.includes('inquire') || text.includes('consultation')) {
+            // If it's not a card-enquire-btn (which we handled above) and it points to contact.html or is a button
+            if (!target.classList.contains('card-enquire-btn')) {
+                e.preventDefault();
+                const context = text.includes('consultation') ? 'a free consultation' : 'your services';
+                window.openWhatsApp(`Hello Beacon Bridge Global Consultancy! I would like to request ${context}.`);
+            }
+        }
+    });
 });
 
 // Global Modal Functions
