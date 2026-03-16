@@ -115,7 +115,6 @@ ul {
   z-index: 100;
   transform: translateZ(150px);
   /* Keep text far in front */
-  pointer-events: none;
 }
 
 .hero-content * {
@@ -128,19 +127,23 @@ ul {
   width: 100%;
   position: relative;
   justify-self: end;
-  overflow: hidden;
-  padding: 20px 0;
+  overflow: visible;
+  padding: 80px 0 60px 0;
 }
 
 .hero-carousel {
   display: flex;
   gap: 20px;
+  /* Allow vertical overflow for the hover scale effect */
   overflow-x: auto;
+  overflow-y: visible;
+  padding: 60px 0;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-  padding: 10px 0 30px;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  touch-action: pan-x; /* Explicitly allow horizontal touch */
 }
 
 .hero-carousel::-webkit-scrollbar {
@@ -180,27 +183,25 @@ ul {
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 15px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
   color: var(--white);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   text-align: center;
-  transform: translateY(10px);
-  opacity: 0;
+  opacity: 1;
   transition: all 0.3s ease;
 }
 
 .grid-card:hover {
-  transform: scale(1.08) translateY(-10px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.3);
-  z-index: 10;
+  transform: scale(1.15) translateY(-20px);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.4);
+  z-index: 100;
   border-color: var(--secondary);
 }
 
 .grid-card:hover img {
   filter: brightness(1.1);
-  transform: scale(1.1);
 }
 
 .grid-card:hover .grid-label {
@@ -394,7 +395,6 @@ ul {
 .hover-scale:hover img {
   filter: contrast(1.1) brightness(1.05);
   /* HD Pop effect */
-  transform: scale(1.05);
   transition: all 0.5s ease;
 }
 
@@ -630,6 +630,21 @@ ul {
   filter: drop-shadow(0 0 8px var(--secondary));
 }
 
+.mobile-reverse-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 992px) {
+  .mobile-reverse-grid {
+    display: flex !important;
+    flex-direction: column-reverse;
+    gap: 30px;
+  }
+}
+
 /* WhatsApp Floating Button */
 .whatsapp-float {
   position: fixed;
@@ -656,7 +671,7 @@ header {
   top: 0;
   width: 100%;
   background: white;
-  z-index: 1000;
+  z-index: 2000; /* Increased z-index to stay above carousel and everything else */
   transition: var(--transition);
   padding: 10px 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -667,6 +682,7 @@ header.scrolled {
   background: white;
   padding: 8px 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 header .btn-primary {
@@ -684,6 +700,13 @@ header .btn-primary:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.nav-toggle-mobile {
+  display: none !important; /* Hidden on desktop; shown on mobile via media query */
+  font-size: 1.5rem;
+  color: #1a365d;
+  cursor: pointer;
 }
 
 .logo {
@@ -752,7 +775,7 @@ header.scrolled .logo {
 }
 
 .nav-links {
-  display: flex;
+  display: flex; /* Shown on desktop; hidden on mobile via media query */
   gap: 12px;
   align-items: center;
 }
@@ -769,6 +792,7 @@ header.scrolled .logo {
   align-items: center;
   white-space: nowrap;
 }
+
 
 .nav-links > a:hover, .dropdown:hover .dropdown-toggle {
   background-color: var(--secondary-light);
@@ -982,58 +1006,288 @@ header.scrolled .logo {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .hero-grid {
+    gap: 40px;
+  }
+}
+
 @media (max-width: 992px) {
   .hero-grid {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 60px;
+    gap: 40px;
   }
 
   .hero-content {
     order: 2;
-    padding-bottom: 80px;
+    padding: 10px 20px 30px 20px; /* Further reduced to move headline up */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .hero-carousel-wrapper {
-    order: 1;
-    margin-top: 40px;
+    order: 2;
+    margin-top: 80px;
     justify-self: center;
-    max-width: 100%;
+    width: 100vw;
+    max-width: 100vw;
+    padding: 20px 0;
+    margin-left: -20px; /* Bleed out of container padding */
+    overflow: visible;
   }
-
+  
   .hero-carousel {
+    padding: 10px 0; /* Reduced padding */
+    gap: 12px;
+  }
+
+  /* Unified Mobile & Desktop Hamburger Menu */
+  .nav-links {
+    display: flex !important;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: white;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    padding: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-bottom: 2px solid var(--secondary);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-links.active {
+    height: auto;
     padding: 20px;
-    justify-content: flex-start;
-    animation: none !important;
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  .grid-card {
-    width: 200px;
-    height: 280px;
-  }
-
-  .hero-btns {
+  .nav-links > a, .dropdown-toggle {
+    width: 100%;
+    margin-bottom: 8px;
     justify-content: center;
+    font-size: 1.1rem;
+    padding: 12px;
+    color: var(--primary);
+  }
+
+  .dropdown-content {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    background: #f8fafc;
+    display: none;
+    padding: 0 0 10px 0;
+    margin-top: 0;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .header-right {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .nav-toggle-mobile {
+    display: block !important;
+    font-size: 1.4rem;
+    color: #0f172a;
+    cursor: pointer;
+  }
+
+  header .btn-primary {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    border-radius: 30px;
+  }
+
+  /* Global Image HD Enhancements on Mobile */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  .grid-card img, 
+  .section img,
+  .hero-carousel img {
+    filter: contrast(1.1) brightness(1.02) saturate(1.05);
+  }
+
+  .logo img {
+    height: 70px; 
+    /* High-Definition (HD) Clarity Filters */
+    filter: contrast(1.1) brightness(1.02) saturate(1.1);
+    /* Allow browser to use full image resolution on zoom */
+    image-rendering: auto;
+    width: auto;
+  }
+
+  .hero-grid {
+    display: flex;
+    flex-direction: column-reverse; /* Carousel on top */
+  }
+
+  .hero-content {
+    order: 2;
+    padding: 20px 20px 40px 20px; /* Reduced top padding to move headline up */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .hero h1 {
-    font-size: 3rem;
+    font-size: 2.6rem;
+    text-align: center;
+    margin-bottom: 25px;
+    width: 100%;
+    color: #ffffff;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    text-align: center;
+    max-width: 100%;
+    margin-bottom: 40px;
+    color: #ffffff;
+    opacity: 1; /* Pure white as per image */
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .hero-btns {
+    display: flex !important; /* Centered buttons */
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .hero-btns .btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    flex: 1;
+    max-width: 160px;
+    margin: 0 !important;
+    background-color: #d4af37 !important;
+    color: #1a365d !important;
+  }
+
+  .hero {
+    background: #020617 !important;
+    padding-top: 80px; /* Reduced from 100px to move content up */
+  }
+
+  .video-bg-container {
+    display: none; /* Hide video background on mobile */
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  /* Reduce blank space/padding on mobile */
+  .section {
+    padding: 60px 0 !important; /* Reduced from 100px */
+  }
+
+  /* Override large inline padding on title sections (100px and 150px) */
+  section.section[style*="padding-top: 100px"],
+  section.section[style*="padding-top: 150px"] {
+    padding-top: 130px !important; /* Increased from 80/100px to move headlines down */
+  }
+
+  @media (max-width: 768px) {
+    section.section[style*="padding-top: 150px"] {
+      padding-top: 160px !important; /* Even more for smaller screens if needed */
+    }
+  }
+
+  h2 {
+    margin-bottom: 30px !important; /* Reduced from 50px */
+  }
+
+  p {
+    margin-bottom: 20px !important;
   }
 }
 
 @media (max-width: 768px) {
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
+  }
+  
+  .hero p {
+    font-size: 0.9rem;
   }
 
-  .nav-links {
-    display: none;
+  .hero-grid {
+    grid-template-columns: 1fr; /* Keep single column but allow full content visibility */
+    padding: 0 10px;
   }
 
-  .badge-1,
-  .badge-2 {
-    display: none;
+  .grid-card {
+    width: 220px; 
+    height: 380px; 
+    border-radius: 35px; 
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: none;
+    position: relative;
   }
+
+  .grid-card img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .grid-label {
+    display: block !important; /* Restore labels */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .carousel-dots .dot.active {
+    background: #f1c40f; /* Bright yellow */
+    transform: scale(1.2);
+  }
+}
+
+.nav-toggle {
+  display: none;
 }
 
 /* Modal Popup Styles */
@@ -1078,8 +1332,9 @@ header.scrolled .logo {
 
 .modal-gallery img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
+  height: 250px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);

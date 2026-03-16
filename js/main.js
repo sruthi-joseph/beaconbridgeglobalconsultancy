@@ -9,6 +9,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Mobile Menu Toggle
+    const navToggle = document.querySelector('.nav-toggle-mobile');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
+            navToggle.classList.toggle('fa-bars');
+            navToggle.classList.toggle('fa-times');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('fa-times');
+                navToggle.classList.add('fa-bars');
+            }
+        });
+
+        // Close menu after clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('fa-times');
+                navToggle.classList.add('fa-bars');
+            });
+        });
+    }
+
     // Intersection Observer for Reveal Animations
     const observerOptions = {
         threshold: 0.1
