@@ -57,13 +57,14 @@ img {
 }
 
 .hd-image {
-  filter: contrast(1.18) brightness(1.05) saturate(1.15) sharp(1.15);
+  filter: contrast(1.1) brightness(1.05) saturate(1.1);
   /* Maximum HD clarity */
   image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
 }
 
 .hd-image:hover {
-  filter: contrast(1.25) brightness(1.1) saturate(1.25);
+  filter: contrast(1.15) brightness(1.08) saturate(1.15);
   transform: scale(1.02);
 }
 
@@ -707,27 +708,56 @@ header .btn-primary:hover {
   font-size: 1.5rem;
   color: #1a365d;
   cursor: pointer;
+  grid-column: 3;
+  justify-self: end;
+}
+
+.nav-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  height: 75px;
+  justify-content: center;
+  height: 120px;
+  width: 120px;
+  background: white;
+  border-radius: 50%;
+  padding: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: var(--transition);
+  overflow: hidden;
 }
 
 .logo img {
   height: 100%;
-  width: auto;
+  width: 100%;
   object-fit: contain;
-  filter: contrast(1.08) brightness(1.02) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transform: scale(1.8);
+  filter: contrast(1.1) brightness(1.02);
   image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
   transition: var(--transition);
+}
+
+.logo:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .logo:hover img {
   filter: contrast(1.15) brightness(1.05) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  transform: scale(1.05);
+  transform: scale(1.9);
 }
 
 /* Background Graphics & Textures */
@@ -771,7 +801,9 @@ header .btn-primary:hover {
 }
 
 header.scrolled .logo {
-  height: 55px;
+  height: 85px;
+  width: 85px;
+  padding: 0;
 }
 
 .nav-links {
@@ -1100,7 +1132,8 @@ header.scrolled .logo {
     display: flex !important;
     align-items: center;
     gap: 10px;
-    margin-left: auto;
+    grid-column: 3;
+    justify-self: end;
   }
 
   .nav-toggle-mobile {
@@ -1131,12 +1164,13 @@ header.scrolled .logo {
   }
 
   .logo img {
-    height: 70px; 
+    height: 100%;
+    width: 100%;
     /* High-Definition (HD) Clarity Filters */
     filter: contrast(1.1) brightness(1.02) saturate(1.1);
     /* Allow browser to use full image resolution on zoom */
     image-rendering: auto;
-    width: auto;
+    object-fit: contain;
   }
 
   .hero-grid {
